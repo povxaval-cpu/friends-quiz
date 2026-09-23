@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мы друзья? 🥺</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            max-width: 420px;
+            width: 90%;
+            transition: all 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #ff6b9d, #c44cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #ccc;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            height: 120px; 
+            width: 100%;
+        }
+
+        .btn {
+            padding: 14px 36px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, all 0.2s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 200, 83, 0.4);
+            z-index: 2;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 28px rgba(0, 200, 83, 0.6);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #ff1744, #ff5252);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 23, 68, 0.4);
+            z-index: 5;
+            position: relative; 
+        }
+
+        /* Экран успеха */
+        .success {
+            display: none;
+            margin-top: 10px;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .success h2 {
+            font-size: 2.2rem;
+            color: #00e676;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Анимация летящих сердечек */
+        .hearts {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatAndFade 2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes floatAndFade {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(1.5) rotate(var(--r));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <h1>Мы друзья? 🥺</h1>
+        <p>Ответь честно...</p>
+
+        <div class="buttons" id="btnBox">
+            <button class="btn btn-yes" id="yesBtn">Да 💖</button>
+            <button class="btn btn-no" id="noBtn">Нет 😤</button>
+        </div>
+
+        <div class="success" id="success">
+            <h2>Урааа! 🎉</h2>
+            <p>Я так и знал(а)! Теперь это официально! 🥰</p>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const success = document.getElementById('success');
+        const btnBox = document.getElementById('btnBox');
+
+        let yesScale = 1;
+        let noScale = 1;
+
+        // Функция убегания кнопки + изменение размеров
+        function moveButton() {
+            if (noBtn.style.position !== 'fixed') {
+                noBtn.style.position = 'fixed';
+            }
+
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // Эффект изменения размера: "Да" растет, "Нет" уменьшается
+            yesScale += 0.15;
+            noScale -= 0.1;
+            
+            if (noScale < 0.4) noScale = 0.4; // Чтобы кнопка совсем не пропала
+            
+            yesBtn.style.transform = `scale(${yesScale})`;
+            noBtn.style.transform = `scale(${noScale})`;
+        }
+
+        // События для мышки и тачскрина
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // Нажатие на "Да"
+        yesBtn.addEventListener('click', () => {
+            btnBox.style.display = 'none';
+            success.classList.add('show');
+
+            // Бесконечный праздничный взрыв из сердечек (пускаем волнами)
+            for (let i = 0; i < 40; i++) {
+                setTimeout(createHeart, i * 30);
+            }
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('hearts');
+            
+            const heartTypes = ['💖', '❤️', '🥰', '✨', '🌸', '🧸'];
+            heart.innerHTML = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+            
+            heart.style.left = '50vw';
+            heart.style.top = '50vh';
+
+            const xMove = (Math.random() - 0.5) * 500; 
+            const yMove = (Math.random() - 0.5) * 500 - 100; 
+            const randomRotate = (Math.random() - 0.5) * 360; 
+
+            heart.style.setProperty('--x', `${xMove}px`);
+            heart.style.setProperty('--y', `${yMove}px`);
+            heart.style.setProperty('--r', `${randomRotate}deg`);
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
