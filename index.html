@@ -165,49 +165,51 @@
         let yesScale = 1;
         let noScale = 1;
 
-        // Функция убегания кнопки + изменение размеров
+        // Функция безопасного убегания кнопки строго внутри экрана
         function moveButton() {
             if (noBtn.style.position !== 'fixed') {
                 noBtn.style.position = 'fixed';
             }
 
-            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
-            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            const padding = 30; // Безопасный отступ от границ
 
-            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            const maxX = window.innerWidth - btnWidth - padding;
+            const maxY = window.innerHeight - btnHeight - padding;
+
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
 
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
-            // Эффект изменения размера: "Да" растет, "Нет" уменьшается
+            // Да растет, Нет уменьшается
             yesScale += 0.15;
-            noScale -= 0.1;
+            noScale -= 0.08;
             
-            if (noScale < 0.4) noScale = 0.4; // Чтобы кнопка совсем не пропала
+            if (noScale < 0.35) noScale = 0.35; 
             
             yesBtn.style.transform = `scale(${yesScale})`;
             noBtn.style.transform = `scale(${noScale})`;
         }
 
-        // События для мышки и тачскрина
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            e.preventDefault(); 
             moveButton();
         });
 
-        // Нажатие на "Да"
         yesBtn.addEventListener('click', () => {
             btnBox.style.display = 'none';
             success.classList.add('show');
 
-            // Бесконечный праздничный взрыв из сердечек (пускаем волнами)
             for (let i = 0; i < 40; i++) {
                 setTimeout(createHeart, i * 30);
             }
         });
 
+        // Праздничный салют (в пределах экрана)
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('hearts');
@@ -218,8 +220,9 @@
             heart.style.left = '50vw';
             heart.style.top = '50vh';
 
-            const xMove = (Math.random() - 0.5) * 500; 
-            const yMove = (Math.random() - 0.5) * 500 - 100; 
+            // Радиус разлета ограничен 150px в любую сторону от центра
+            const xMove = (Math.random() - 0.5) * 300; 
+            const yMove = (Math.random() - 0.5) * 300; 
             const randomRotate = (Math.random() - 0.5) * 360; 
 
             heart.style.setProperty('--x', `${xMove}px`);
